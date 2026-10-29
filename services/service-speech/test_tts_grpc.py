@@ -11,7 +11,7 @@ rpc must SUCCEED and return 100 ms of silence — i.e. liaison's
 "tts skipped: tts rpc failed: ... TTS backend not available" must NOT fire.
 
 Run INSIDE the container with the built speech venv + codegen on PYTHONPATH:
-    cd /root/workspace/packages/service-speech
+    cd /root/workspace/services/service-speech
     export PYTHONPATH="$PWD/rbnx-build/codegen/proto_gen:$PWD/rbnx-build/codegen/robonix_mcp_types:$PYTHONPATH"
     rbnx-build/venv/bin/python test_tts_grpc.py --port 40631
 

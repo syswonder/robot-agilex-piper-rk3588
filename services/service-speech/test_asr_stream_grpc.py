@@ -8,7 +8,7 @@ Exercises the FULL container path without a microphone:
                 → host FunASR ws://127.0.0.1:8771 → text back up the chain.
 
 Run INSIDE the container with the built speech venv + codegen on PYTHONPATH:
-    cd /root/workspace/packages/service-speech
+    cd /root/workspace/services/service-speech
     export PYTHONPATH="$PWD/rbnx-build/codegen/proto_gen:$PWD/rbnx-build/codegen/robonix_mcp_types:$PYTHONPATH"
     rbnx-build/venv/bin/python test_asr_stream_grpc.py --port 43089 [WAV]
 

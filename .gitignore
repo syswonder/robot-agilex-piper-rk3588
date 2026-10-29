@@ -57,10 +57,10 @@ tools/calibration/piper/artifacts/handeye/*.npy
 tools/calibration/piper/artifacts/handeye/2d_homography_report.txt
 tools/calibration/piper/Log/OrbbecSDK.log.txt
 
-# packages/：运行期日志与崩溃转储（core dump）
+# Primitive/service/skill runtime logs and crash dumps
 #   primitive-orbbec-dabai_dcw-camera-rbnx/log.txt —— 相机节点运行日志
 #   service-roboarm-ik-rbnx/core.*                  —— IK 服务崩溃转储
 #   skill-pick-vertical-grasp-piper-rbnx/core.*     —— 抓取技能崩溃转储
-packages/primitives/primitive-orbbec-dabai_dcw-camera-rbnx/log.txt
-packages/services/service-roboarm-ik-rbnx/core.*
-packages/skills/skill-pick-vertical-grasp-piper-rbnx/core.*
+primitives/primitive-orbbec-dabai_dcw-camera-rbnx/log.txt
+services/service-roboarm-ik-rbnx/core.*
+skills/skill-pick-vertical-grasp-piper-rbnx/core.*

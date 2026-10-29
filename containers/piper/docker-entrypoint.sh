@@ -8,12 +8,15 @@ set -e
 
 # Use this deployment's optional network settings for cloud model requests.
 # The file lives in the mounted workspace, so existing containers also pick it up.
-if [ -r /root/workspace/deploy/piper/network.local.env ]; then
-    source /root/workspace/deploy/piper/network.local.env
-fi
-if [ -r /root/workspace/deploy/piper/tencent-asr.local.env ]; then
-    source /root/workspace/deploy/piper/tencent-asr.local.env
-fi
+# config/ is the canonical location. Existing installations may keep the
+# same optional private files under deploy/piper/ until they migrate them.
+for settings in network.local.env tencent-asr.local.env; do
+    if [ -r "/root/workspace/config/$settings" ]; then
+        source "/root/workspace/config/$settings"
+    elif [ -r "/root/workspace/deploy/piper/$settings" ]; then
+        source "/root/workspace/deploy/piper/$settings"
+    fi
+done
 
 mkdir -p /tmp/runtime-root
 chmod 700 /tmp/runtime-root

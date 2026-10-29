@@ -1,4 +1,4 @@
-# 构建上下文瘦身：镜像只需要 vendor/（robonix 源码）与 packages/、deploy/
+# Build context: Robonix source is baked into the image; deployment files are mounted.
 .git/
 rbnx-boot/
 .robonix-build/
@@ -6,8 +6,12 @@ docs/
 tools/
 
 # 包构建产物（colcon 工作区 / venv，动辄上 G）
-packages/*/rbnx-build/
-packages/*/logs/
+primitives/*/rbnx-build/
+services/*/rbnx-build/
+skills/*/rbnx-build/
+primitives/*/logs/
+services/*/logs/
+skills/*/logs/
 
 # 宿主侧的 venv 与模型：两个镜像都不需要它们——模型服务在宿主上跑、读原件。
 # 不挡的话上下文会有好几个 G（各服务的 torch venv + 校准 venv + 849MB 模型），

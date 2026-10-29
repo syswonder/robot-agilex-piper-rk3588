@@ -46,7 +46,7 @@ ENV RMW_IMPLEMENTATION=rmw_zenoh_cpp
 # refuses to connect ("no JointState within 30s"), even though the AF_CAN data
 # path itself works. The proven host stack has iproute2; our slim base did not.
 # alsa-utils provides `arecord`, the capture backend for the mic primitive
-# (packages/primitive-audio-mic-rbnx → robonix/primitive/audio/mic, the voice
+# (primitives/primitive-audio-mic-rbnx → robonix/primitive/audio/mic, the voice
 # path's audio source). The mic driver shells out to
 # `arecord -D plughw:2,0 -f S16_LE -r 16000 -c 1 -t raw`; the USB mic's
 # /dev/snd nodes are already visible via -v /dev:/dev (see docker/run.sh).
@@ -131,7 +131,7 @@ RUN pip3 install --no-cache-dir --timeout 120 --retries 5 \
     "scipy==1.15.3" kinpy
 
 # ── uv (Python package/venv manager) ───────────────────────────────────
-# The speech service package (packages/service-speech, added for voice
+# The speech service package (services/service-speech, added for voice
 # control) is the first package whose build.sh is uv-managed: it does
 # `uv venv` + `uv sync` to materialise an isolated rbnx-build/venv/, then
 # `uv pip install` the sherpa-onnx wake-word wheels. The 7 grasp packages

@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--catalog-source', type=Path, required=True)
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--robonix-source', type=Path, default=ROOT/'vendor/robonix')
-    parser.add_argument('--repo', default='https://github.com/kaileliu/robot-agilex-piper-rk3588')
+    parser.add_argument('--repo', default='https://github.com/syswonder/robot-agilex-piper-rk3588')
     parser.add_argument('--output', type=Path, default=ROOT/'dist/catalog')
     args = parser.parse_args()
     root = args.root.resolve()
@@ -53,7 +53,11 @@ def main():
         prefix = f'{path}/' if path else ''
         paths = [p[len(prefix):] for p in files if p.startswith(prefix+'assets/')]
         result = official.check_artwork(paths, lambda p: (root/prefix/p).read_bytes())
-        return {'promo': [], 'icon': '', 'problems': result['problems'], 'data': result['data']}
+        url = lambda p: f'https://raw.githubusercontent.com/{official.parse_repo(repo)[0]}/{official.parse_repo(repo)[1]}/{branch}/{prefix}{p}'
+        chosen = result['promo'].get('', [])
+        return {'promo': [url(p) for p in chosen], 'icon': '',
+                'problems': result['problems'],
+                'data': {url(p): data for p, data in result['data'].items()}}
     official.load_remote_manifest = manifest
     official.load_remote_repository_tree = lambda repo, branch: tree
     official.load_remote_default_branch = lambda repo: 'main'
@@ -88,25 +92,35 @@ def main():
     records = [official.collect_entry(e, set()) for e in entries]
     official.annotate_deploy_dependencies(records)
     official.validate_deploy_dependency_paths(records)
-    problems = [p for r in records for p in r.get('catalog_warnings', [])+r.get('deployment_warnings', [])]
+    problems = [p for r in records for p in r.get('catalog_warnings', [])+r.get('deployment_warnings', [])+r.get('_artwork_problems', [])]
     if problems:
         raise SystemExit(json.dumps(problems, indent=2))
-    # Resolve relative robot dependencies to the same repo/path catalog entries.
+    # Confirm every relative dependency has a checked bundled package manifest.
     by_path = {r.get('path'):r['name'] for r in records if r['catalog_type']=='package'}
     for r in records:
         for dep in r['deploy_dependencies']:
             if dep['path'] not in by_path:
-                raise SystemExit(f'Deployment dependency not cataloged: {dep["path"]}')
+                raise SystemExit(f'Deployment dependency not checked: {dep["path"]}')
+    # Whole-robot submissions may bundle dependencies without separately listing
+    # them in the catalog. Validate this exact submission mode as well.
+    robot_records = [r for r in records if r['catalog_type'] == 'robot']
+    official.annotate_deploy_dependencies(robot_records)
+    official.validate_deploy_dependency_paths(robot_records)
+    robot_problems = [p for r in robot_records for p in r.get('deployment_warnings', [])]
+    if robot_problems:
+        raise SystemExit(json.dumps(robot_problems, indent=2))
+    submission = {'robots': fragment['robots']}
     args.output.mkdir(parents=True, exist_ok=True)
-    (args.output/'catalog.additions.yaml').write_text(yaml.safe_dump(fragment,sort_keys=False))
+    (args.output/'catalog.additions.yaml').write_text(yaml.safe_dump(submission,sort_keys=False))
     report = {'status':'passed', 'scope':'local source with official strict new-entry rules',
               'catalog_checker_commit':revision, 'remote_verified':False,
               'repository_url_confirmed':'/OWNER/' not in args.repo,
-              'packages':len(packages), 'robots':1, 'deployment_dependencies':sum(len(r['deploy_dependencies']) for r in records),
+              'packages_checked':len(packages), 'robots':1, 'submitted_catalog_entries':1, 'deployment_dependencies':sum(len(r['deploy_dependencies']) for r in records),
               'files':len(files), 'warnings':problems,
-              'contracts_source':str(args.robonix_source), 'entries':records}
+              'contracts_source':str(args.robonix_source),
+              'entries':[{k:v for k,v in r.items() if not k.startswith('_')} for r in records]}
     (args.output/'validation.json').write_text(json.dumps(report, indent=2, ensure_ascii=False)+'\n')
-    print(f'PASS: {len(packages)} packages + 1 robot; all dependency paths, metadata, contracts, IDL, transports and artwork pass.')
+    print(f'PASS: 1 whole-robot submission; {len(packages)} bundled packages checked; all dependency paths, metadata, contracts, IDL, transports and artwork pass.')
     print(f'Catalog additions and report: {args.output}')
     if '/OWNER/' in args.repo:
         print('Remote URL pending: replace OWNER by rerunning with --repo https://github.com/<owner>/<repo>.')

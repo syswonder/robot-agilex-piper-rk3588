@@ -1,7 +1,7 @@
 # Description: piper 标定的产物路径——本子树唯一来源（属性名与 s10/paths.py 对齐，
 # 公共代码 common/ 认的就是这些名字）。
 #
-# 产物是这套工具与部署之间的接口，标定完要抄进 deploy/piper/manifest.yaml：
+# 产物是这套工具与部署之间的接口，标定完要抄进 robonix_manifest.local.yaml：
 #   intrinsics/{camera_matrix,dist_coeffs}.npy → service.grasp_pose 与 skill.pick 的
 #                                               camera_matrix / dist_coeffs（技能检测前按它去畸变）
 #   handeye/2d_homography.npy                 → service.grasp_pose 与 skill.pick 的 homography_matrix

@@ -59,7 +59,7 @@ fi
 # --net host: ROS2/zenoh/gRPC discovery, host CAN interfaces (piper_ctl, later),
 #             and reaching the host-side YOLO inference service (decision 乙).
 # No --gpus: this container is CPU-only by design.
-# robonix 源码在镜像里（可写），packages/、deploy/ 由仓库挂载提供。
+# robonix 源码在镜像里（可写），primitives/、services/、skills/ 和 config/ 由仓库挂载提供。
 # PID 1 is `sleep infinity`, so the container stays up after we detach; we
 # attach with `docker exec` (interactive shell, or one-off command below).
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then

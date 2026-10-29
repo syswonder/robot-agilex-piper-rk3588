@@ -16,5 +16,5 @@ client bridge is also enabled, explicitly select the input provider to avoid
 ambiguous microphone discovery.
 
 Derived from the Robonix ALSA audio driver; provenance is in
-`packages/UPSTREAMS.md` at the robot repository root. Software license:
+`docs/UPSTREAMS.md` at the robot repository root. Software license:
 MulanPSL-2.0.

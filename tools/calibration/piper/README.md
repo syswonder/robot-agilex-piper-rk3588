@@ -72,3 +72,5 @@ cd tools/calibration/piper && python app.py --port 8090
 - "清空图片""清空已采点"这类按钮不占硬件，别的步骤开着也能用；但**拍照、记录点、让臂动**这些必须独占相机/臂，被别的步骤占着会被拒（页面会说你该去哪页点「结束本步骤」）。
 - CAN 口自动探测只认 USB-CAN（gs_usb），板载 mttcan 不算；接口是 DOWN 时页面会给出启用命令，但不会替你改接口状态。
 - 标定出的矩阵与内参**要人工抄进清单**（对照表在上面），没有自动写回。
+
+配置文件位于 [`config/calibration/piper.yaml`](../../../config/calibration/piper.yaml)。

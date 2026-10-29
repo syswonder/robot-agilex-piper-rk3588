@@ -1,10 +1,10 @@
-# Description: 读本子树同目录下的 config.yaml（每个部署一份：它认的是自己那份配置）。
+# Description: 读取仓库 config/calibration/piper.yaml（每个部署一份：它认的是自己那份配置）。
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-CONFIG_PATH = Path(__file__).resolve().parent / "config.yaml"
+CONFIG_PATH = Path(__file__).resolve().parents[3] / "config" / "calibration" / "piper.yaml"
 
 
 def load_config(config_file: str | Path) -> dict:

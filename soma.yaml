@@ -1,22 +1,4 @@
-# Soma body description for the Piper-arm + Orbbec + grasp deploy.
-#
-# Loaded by robonix-soma (PR #109 v2 flat schema) and exposed verbatim
-# through robonix/system/soma/get_yaml. The URDF referenced under
-# `urdf.path` is streamed as-is via robonix/system/soma/get_urdf.
-#
-# What soma actually parses right now (system/soma/src/store.rs
-# MinimalSomaDoc): only `urdf.path` and `robot.id`. Everything else in
-# this file is forward-looking — preserved byte-for-byte in get_yaml
-# responses so downstream services (footprint / description /
-# sensor_extrinsics srvs) can start mining it the moment they ship.
-#
-# References:
-#   - Design:            /Users/howenliu/lab/docs/soma_two_stage_bringup.md §12
-#   - Ranger sibling:    /Users/howenliu/lab/ranger_mini_deploy/soma.yaml
-#   - Component tree:    matches package_manifest.yaml provider_ids of
-#                        orbbec_camera / piper_ctl / piper_description in
-#                        /Users/howenliu/lab/package_syswonder/*-rbnx/
-
+# Piper body description. URDF paths are relative to this file.
 urdf:
   # Path is resolved relative to this YAML file's directory (soma
   # store.rs::SomaBody::load).

@@ -45,11 +45,11 @@ system:
     listen: 127.0.0.1:50091
     log: info
     provider_id: soma
-    robot_yaml: deploy/piper/soma.yaml
-    config: deploy/piper/soma_config.yaml
+    robot_yaml: soma.yaml
+    config: config/soma.yaml
 primitive:
 - name: orbbec_camera
-  path: packages/primitives/primitive-orbbec-dabai_dcw-camera-rbnx
+  path: primitives/primitive-orbbec-dabai_dcw-camera-rbnx
   config:
     launch_file: gemini_330_series.launch.py
     camera_name: camera
@@ -64,7 +64,7 @@ primitive:
     depth_fps: 0
     sentinel_timeout_s: 30.0
 - name: piper_ctl
-  path: packages/primitives/primitive-agilex-piper-arm-rbnx
+  path: primitives/primitive-agilex-piper-arm-rbnx
   config:
     can_port: can0
     can_bitrate: 1000000
@@ -75,10 +75,10 @@ primitive:
     gripper_val_mutiple: 2
     sentinel_timeout_s: 30.0
 - name: piper_description
-  path: packages/primitives/primitive-agilex-piper-description-rbnx
+  path: primitives/primitive-agilex-piper-description-rbnx
   config: {}
 - name: audio_mic
-  path: packages/primitives/primitive-audio-mic-rbnx
+  path: primitives/primitive-audio-mic-rbnx
   config:
     mic_device: ''
     mic_sample_rate: 16000
@@ -86,14 +86,14 @@ primitive:
     mic_bits: 16
     mic_chunk_ms: 100
 - name: audio_client_bridge
-  path: packages/primitives/primitive-audio-client-bridge-rbnx
+  path: primitives/primitive-audio-client-bridge-rbnx
   config:
     transport: reverse
     listen_host: 0.0.0.0
     listen_port: 60002
 service:
 - name: llm_detect
-  path: packages/services/service-object-detect-rbnx
+  path: services/service-object-detect-rbnx
   config:
     detect_backend: yolo_http
     yolo_http_url: http://127.0.0.1:8770/detect
@@ -110,7 +110,7 @@ service:
     rgb_topic: ''
     camera_info_topic: ''
 - name: grasp_pose
-  path: packages/services/service-grasp-pose-rbnx
+  path: services/service-grasp-pose-rbnx
   config:
     homography_matrix:
     - - 7.426233059959486e-05
@@ -130,9 +130,9 @@ service:
     bias_y: 0.0
     output_frame: arm/base_link
 - name: roboarm_ik
-  path: packages/services/service-roboarm-ik-rbnx
+  path: services/service-roboarm-ik-rbnx
   config:
-    urdf_path: ${PIPER_WORKSPACE}/deploy/piper/urdf/piper.urdf
+    urdf_path: ${PIPER_WORKSPACE}/urdf/piper.urdf
     init_joints_deg:
     - -90.0
     - 0.0
@@ -164,21 +164,21 @@ service:
     reset_feedback_timeout_s: 8.0
     max_gripper_width: 0.08
 - name: speech
-  path: packages/services/service-speech
+  path: services/service-speech
   config:
     speech_backend: custom
     speech_asr_stream_backend_class: speech_service.remote_asr:RemoteFunASRStreamingBackend
     funasr_remote_url: ws://127.0.0.1:8771
     wake_words:
     - 罗伯特
-    asr_log_file: /root/workspace/deploy/piper/rbnx-boot/logs/asr_transcripts.log
+    asr_log_file: /root/workspace/rbnx-boot/logs/asr_transcripts.log
     speech_tts_backend_class: speech_service.service:MockTTSBackend
     tencent_tts_voice_type: 1001
     tencent_tts_region: ap-guangzhou
     default_speaker_provider_id: audio_client_bridge
 skill:
 - name: pick
-  path: packages/skills/skill-pick-vertical-grasp-piper-rbnx
+  path: skills/skill-pick-vertical-grasp-piper-rbnx
   config:
     place_positions:
       carrot:
@@ -201,7 +201,7 @@ skill:
     grab_vlm_base_url: https://api.ofox.io/v1
     grab_vlm_api_key: <YOUR_LLM_API_KEY>
     grab_vlm_model: gpt-5.6-sol
-    runtime_config_file: /root/workspace/deploy/piper/rbnx-boot/runtime_config.txt
+    runtime_config_file: /root/workspace/rbnx-boot/runtime_config.txt
     demo_pos_a:
     - 0.25
     - 0.0

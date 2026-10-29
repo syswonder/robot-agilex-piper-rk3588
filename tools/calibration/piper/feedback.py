@@ -7,13 +7,13 @@ import time
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO / "packages/services/service-roboarm-ik-rbnx"))
+sys.path.insert(0, str(REPO / "services/service-roboarm-ik-rbnx"))
 from roboarm_ik.solver import PiperRoboarmIk
 
 
 @lru_cache(maxsize=1)
 def solver():
-    return PiperRoboarmIk(urdf_path=str(REPO / "deploy/piper/urdf/piper.urdf"))
+    return PiperRoboarmIk(urdf_path=str(REPO / "urdf/piper.urdf"))
 
 
 def read_feedback(arm, timeout_s=3.0):

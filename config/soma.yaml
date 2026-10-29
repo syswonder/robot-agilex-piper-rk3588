@@ -1,0 +1,5 @@
+# Soma process configuration; paths are relative to this file.
+atlas_endpoint: 127.0.0.1:50051
+listen:         127.0.0.1:50091
+provider_id:    soma
+robot_yaml:     ../soma.yaml

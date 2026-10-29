@@ -15,12 +15,14 @@ independent validation of the current hardware calibration has not passed.
 Physical object grasping has not been validated.** This repository provides a
 deployment template that needs site-specific configuration. Historical
 calibration matrices and motion poses must be revalidated for each installation.
-Cover images and demo media are currently omitted.
+Demo media is currently omitted.
 
 [Capabilities](#capabilities) · [Architecture](#architecture) ·
 [Installation](#installation) · [Configuration and calibration](#configuration-and-calibration) ·
 [Start and use](#start-and-use) · [Validation](#validation) · [Stop](#stop) ·
 [Package Catalog integration](#package-catalog-integration) · [Troubleshooting](#troubleshooting)
+
+![AgileX Piper arm and parallel gripper on the deployment workbench](assets/promo/01.jpg)
 
 ## Capabilities
 
@@ -74,8 +76,8 @@ The `llm_detect` service can use the same HTTP backend. The skill's default YOLO
 path calls the host detector directly. The NPU support package exposes no Atlas
 contract and is not started in the container's `service:` list.
 
-Body hierarchy and description are in [soma.yaml](deploy/piper/soma.yaml), and
-transforms and geometry are in the [Piper URDF](deploy/piper/urdf/piper.urdf).
+Body hierarchy and description are in [soma.yaml](soma.yaml), and
+transforms and geometry are in the [Piper URDF](urdf/piper.urdf).
 System and package configuration live in the root
 [robonix_manifest.yaml](robonix_manifest.yaml). Packages call each other through
 contract IDs; provider IDs and catalog package names are separate identifiers.
@@ -104,7 +106,7 @@ on x86_64 or another Python version. The default detector uses FP16 with a
 ### 1. Clone this repository and the pinned Robonix source
 
 ```bash
-git clone https://github.com/kaileliu/robot-agilex-piper-rk3588.git
+git clone https://github.com/syswonder/robot-agilex-piper-rk3588.git
 cd robot-agilex-piper-rk3588
 
 git clone https://github.com/syswonder/robonix.git vendor/robonix
@@ -113,7 +115,7 @@ git -C vendor/robonix submodule update --init --recursive
 ```
 
 Robonix source is fetched separately; see [vendor/PINS.md](vendor/PINS.md) for the
-pinned revision. ROS drivers, services, and skills are included under `packages/`.
+pinned revision. ROS drivers, services, and skills are included under `primitives/`, `services/`, and `skills/`.
 Their upstream default branches are not cloned during build or startup, so
 upstream changes do not silently replace this deployment's modifications.
 
@@ -228,6 +230,11 @@ grasping is ready.
 
 ## Start and use
 
+The root `build.sh` and `start.sh` scripts run the same container commands shown
+below with `robonix_manifest.local.yaml`. Complete configuration and calibration
+before starting the robot.
+
+
 Run the inference backend, Robonix stack, and operator interface in separate
 terminals.
 
@@ -334,12 +341,12 @@ bridge.
 ```bash
 # Example: validate the arm package. Other paths are in catalog/package-paths.json.
 bash containers/piper/run.sh -e \
-  'cd /root/workspace && rbnx validate packages/primitives/primitive-agilex-piper-arm-rbnx'
+  'cd /root/workspace && rbnx validate primitives/primitive-agilex-piper-arm-rbnx'
 ```
 
 This checks the manifest without running the package's start command. The
 container entry point itself prepares the ROS/Zenoh environment. Repository
-[GitHub Actions](https://github.com/kaileliu/robot-agilex-piper-rk3588/actions)
+[GitHub Actions](https://github.com/syswonder/robot-agilex-piper-rk3588/actions)
 run strict catalog preflight validation; see the
 [submission preparation guide](docs/PACKAGE_SUBMISSION.md) for rules and reports.
 
@@ -394,17 +401,18 @@ This repository is prepared according to the
 - Robot catalog name `robonix.robot.agilex.piper_rk3588`; `catalog:` supplies
   version, description, license, tags, and maintainers.
 - Dependencies are included and referenced through repository-relative paths.
-  Ten Robonix packages and a separate NPU support package each provide a
+  Ten bundled Robonix packages and a separate NPU support package each provide a
   `package_manifest.yaml`, README, and the contracts/IDL and resources they need.
 - Local variants use the `.piper_rk3588` package-name suffix to avoid colliding
   with upstream entries. Provider and contract IDs are preserved. Every declared
   capability specifies its actual transport.
-- Cover images and icons are optional and currently omitted. Local credentials,
-  caches, logs, and build directories are excluded from publication.
+- The deployment cover is `assets/promo/01.jpg` (1600×1000 JPEG). An icon is
+  optional. Local credentials, caches, logs, and build directories are excluded
+  from publication.
 
-**The current stage is source-repository preparation only; official catalog
-listing is not being requested.** Once submission is explicitly confirmed, add
-name/repo/path entries to the official `catalog.yaml`. Package source belongs in
+This deployment is submitted as **A whole robot**, with one entry under
+`robots:` in the official `catalog.yaml`. Its bundled dependencies resolve
+inside this repository and do not require separate catalog entries. Package source belongs in
 this repository, not in the catalog repository. See
 [PACKAGE_SUBMISSION.md](docs/PACKAGE_SUBMISSION.md) for validation commands, the
 dependency inventory, and source-export instructions.
@@ -430,20 +438,24 @@ for them. For driver, calibration, and deployment log diagnostics, see the
 ## Repository layout
 
 ```text
-robonix_manifest.yaml              Root deployment entry point for installation/catalog
-catalog/package-paths.json         Inventory of the 11 published package directories
-packages/primitives/              Arm, camera, description, and audio primitives
-packages/services/                Detection, grasp poses, IK, and speech
-packages/skills/                  Piper vertical-grasp skill
-yolo_npu/                         RKNN models, runtime, HTTP server, and regression tests
-containers/piper/                 ROS 2 Humble / Robonix image and container entry points
-deploy/piper/                     Soma configuration and URDF
-host-services/funasr/             Optional host ASR and model download scripts
-tools/calibration/                Intrinsics, planar hand-eye mapping, and verification
+assets/promo/01.jpg                Deployment photograph for the catalog
+config/                           Soma and calibration configuration
+urdf/piper.urdf                    Piper arm and gripper model
+primitives/                       Arm, camera, description, and audio primitives
+services/                         Detection, grasp poses, IK, and speech
+skills/                           Piper vertical-grasp skill
 scripts/                          Catalog validation and filtered source export
-.github/workflows/                Source repository CI
-docs/                            Package submission preparation
+tools/calibration/                Intrinsics, hand-eye mapping, and verification
+containers/piper/                 ROS 2 Humble image and container entry points
+host-services/funasr/              Optional host ASR and model download scripts
+yolo_npu/                         NPU models, runtime, HTTP server, and tests
+catalog/                          Package inventory and publication policy
+docs/                             Submission preparation and source provenance
 vendor/PINS.md                    Pinned Robonix source acquisition instructions
+.github/workflows/                Source repository CI
+build.sh, start.sh                Container build and boot entry points
+soma.yaml                         Root body description
+robonix_manifest.yaml              Root deployment and whole-robot catalog entry
 ```
 
 Publication is restricted by `catalog/publication.json`. Runtime dependencies,
@@ -459,6 +471,6 @@ conditions, including Apache-2.0 drivers and the
 [RKNN SDK License](yolo_npu/vendor/RKNN-LICENSE).
 
 - [Robonix](https://github.com/syswonder/robonix) and its [documentation](https://book.robonix.ai/): runtime, contracts, Soma, and deployment conventions.
-- [packages/UPSTREAMS.md](packages/UPSTREAMS.md): upstream revisions and local package modifications.
+- [docs/UPSTREAMS.md](docs/UPSTREAMS.md): upstream revisions and local package modifications.
 - [SOURCES.md](SOURCES.md): deployment provenance and adaptation history.
 - [yolo_npu/SOURCES.md](yolo_npu/SOURCES.md): weights, RKNN SDK/runtime provenance, versions, and checksums.
