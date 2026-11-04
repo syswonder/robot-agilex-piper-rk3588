@@ -1,7 +1,7 @@
 # Catalog/portable deployment entrypoint. Site-local secrets and calibration stay in *.local.yaml.
 # Review CAN, calibration and activation before hardware use; see docs/PACKAGE_SUBMISSION.md.
 manifestVersion: 1
-name: robonix-piper-rk3588-deploy
+name: robonix-agilex-piper_rk3588
 catalog:
   name: robonix.robot.agilex.piper_rk3588
   version: 0.2.0
